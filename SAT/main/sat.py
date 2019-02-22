@@ -206,7 +206,7 @@ class DpSatSolver:
                 file.write(line)
         file.close()
 
-    def recursive_step(self, data):
+    def recursive_step_dp(self, data):
 
         simplify = True
         while simplify:
@@ -223,24 +223,88 @@ class DpSatSolver:
             branch.set_literal(var, False)
             data.set_literal(var, True)
 
-            found = self.recursive_step(data)
+            found = self.recursive_step_dp(data)
             if found is True:
                 return True
-            found = self.recursive_step(branch)
+            found = self.recursive_step_dp(branch)
             if found is True:
                 return True
+        return False
+
+    def DLCS(self, literal):
+        positive = 0
+        negative = 0
+
+        for clause in literal.clauses:
+            key = literal.id
+            for elem in clause.variables:
+                if abs(elem) == key:
+                    if elem > 0:
+                        positive += 1
+                    else:
+                        negative += 1
+
+        return positive + negative, positive > negative
+
+    def get_max_dlcs(self, modifiables):
+        maxi = 0
+        max_dlcs_var = None
+        max_dlcs_sign = None
+        for modifiable in modifiables:
+            dlcs_sum, sign = self.DLCS(modifiable)
+            if dlcs_sum > maxi:
+                maxi = dlcs_sum
+                max_dlcs_var = modifiable
+                max_dlcs_sign = sign
+
+        return max_dlcs_var, max_dlcs_sign
+
+    def recursive_step_DLCS(self, data):
+        simplify = True
+        while simplify:
+            simplify = self.simplify(data)
+
+        if data.is_sat():
+            self.write_results(data)
+            return True
+
+        modifiables = data.get_modifiable_literals()
+
+        max_dlcs_var, max_dlcs_sign = self.get_max_dlcs(modifiables)
+
+        while max_dlcs_var:
+            branch = copy.deepcopy(data)
+            branch.set_literal(max_dlcs_var, not max_dlcs_sign)
+            data.set_literal(max_dlcs_var, max_dlcs_sign)
+
+            found = self.recursive_step_DLCS(data)
+            if found is True:
+                return True
+            found = self.recursive_step_DLCS(branch)
+            if found is True:
+                return True
+            max_dlcs_var, max_dlcs_sign = self.get_max_dlcs(modifiables)
         return False
 
     def algorithm(self):
         data = SatData()
         self.pre_process_clausses(data)
 
-        result = self.recursive_step(data)
+        result = self.recursive_step_dp(data)
         if result:
             print("SAT")
         else:
             print("NON SAT")
 
+    def algorithm_dlcs(self):
+        data = SatData()
+        self.pre_process_clausses(data)
+
+        result = self.recursive_step_DLCS(data)
+        if result:
+            print("SAT")
+        else:
+            print("NON SAT")
 
 sat = DpSatSolver()
-sat.algorithm()
+sat.algorithm_dlcs()
