@@ -231,6 +231,16 @@ class DpSatSolver:
                 return True
         return False
 
+    def algorithm(self):
+        data = SatData()
+        self.pre_process_clausses(data)
+
+        result = self.recursive_step_dp(data)
+        if result:
+            print("SAT")
+        else:
+            print("NON SAT")
+
     def DLCS(self, literal):
         positive = 0
         negative = 0
@@ -269,7 +279,6 @@ class DpSatSolver:
             return True
 
         modifiables = data.get_modifiable_literals()
-
         max_dlcs_var, max_dlcs_sign = self.get_max_dlcs(modifiables)
 
         while max_dlcs_var:
@@ -283,18 +292,9 @@ class DpSatSolver:
             found = self.recursive_step_DLCS(branch)
             if found is True:
                 return True
+            modifiables = data.get_modifiable_literals()
             max_dlcs_var, max_dlcs_sign = self.get_max_dlcs(modifiables)
         return False
-
-    def algorithm(self):
-        data = SatData()
-        self.pre_process_clausses(data)
-
-        result = self.recursive_step_dp(data)
-        if result:
-            print("SAT")
-        else:
-            print("NON SAT")
 
     def algorithm_dlcs(self):
         data = SatData()
@@ -306,5 +306,91 @@ class DpSatSolver:
         else:
             print("NON SAT")
 
+    def get_clause_size(self, clause, literals):
+        counter = 0
+        for var in clause.variables:
+            key = abs(var)
+            literal = literals[key]
+            if literal.is_modifiable is True:
+                counter += 1
+        return counter
+
+    def get_smallest_size(self, data):
+        mini = 100000000
+        for clause in data.clauses:
+            value = clause.get_value(data.literals)
+            if not value:
+                length = self.get_clause_size(clause, data.literals)
+                if length < mini:
+                    mini = length
+        return mini
+
+    def MOMs_heuristic(self, literal, data, smallest_size):
+        positive = 0
+        negative = 0
+        k = 2
+        for clause in data.clauses:
+            length = self.get_clause_size(clause, data.literals)
+            value = clause.get_value(data.literals)
+            if length == smallest_size and not value:
+                for var in clause.variables:
+                    if abs(var) == literal.id:
+                        if var > 0:
+                            positive += 1
+                        else:
+                            negative += 1
+        return (positive + negative) * (2 ** k) + positive * negative
+
+    def get_max_MOMs(self, modifiables, data):
+        maxi = -1
+        smallest_size = self.get_smallest_size(data)
+        max_MOMs_var = None
+        for modifiable in modifiables:
+            MOMs_value = self.MOMs_heuristic(modifiable, data, smallest_size)
+            if MOMs_value > maxi:
+                maxi = MOMs_value
+                max_MOMs_var = modifiable
+        return max_MOMs_var
+
+    def recursive_step_MOMs(self, data):
+
+        simplify = True
+        while simplify:
+            simplify = self.simplify(data)
+
+        if data.is_sat():
+            self.write_results(data)
+            return True
+
+        modifiables = data.get_modifiable_literals()
+        max_moms = self.get_max_MOMs(modifiables, data)
+
+        while max_moms:
+            branch = copy.deepcopy(data)
+            branch.set_literal(max_moms, False)
+            data.set_literal(max_moms, True)
+
+            found = self.recursive_step_dp(data)
+            if found is True:
+                return True
+            found = self.recursive_step_dp(branch)
+            if found is True:
+                return True
+
+            modifiables = data.get_modifiable_literals()
+            max_moms = self.get_max_MOMs(modifiables, data)
+
+        return False
+
+    def algorithm_MOMS(self):
+        data = SatData()
+        self.pre_process_clausses(data)
+
+        result = self.recursive_step_MOMs(data)
+        if result:
+            print("SAT")
+        else:
+            print("NON SAT")
+
 sat = DpSatSolver()
-sat.algorithm_dlcs()
+sat.algorithm_MOMS()
