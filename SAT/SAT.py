@@ -1,5 +1,7 @@
 import copy
 
+import sys
+
 
 class Clause:
     id = 0
@@ -44,11 +46,11 @@ class SatData:
     no_clauses = -1
     no_literals = -1
 
-    def __init__(self):
+    def __init__(self, filepath):
 
         self.literals = {}
-        self.read_data("../sudoku-rules.txt")
-        self.read_additional_rules("../sudoku-example.txt")
+        self.read_data("sudoku-rules.txt")
+        self.read_additional_rules(filepath)
 
     def read_data(self, path):
         file = open(path, "r")
@@ -124,7 +126,11 @@ class SatData:
 
 
 class DpSatSolver:
-    is_solution_found = False
+
+    def __init__(self, filepath):
+        self.is_solved = False
+        self.filepath = filepath
+        self.splits = 0
 
     def is_tautology(self, clause):
         visited = []
@@ -195,16 +201,25 @@ class DpSatSolver:
         return counter > 0
 
     def write_results(self, data):
-        file = open("../results.txt", "w")
-        line = "p cnf 81 81\n"
+        file_name = self.filepath.split('.')[0]
+        file = open(file_name + ".out", "w")
+        literals_no = len(data.literals.keys())
+        line = "p cnf "+str(literals_no)+" "+str(literals_no)+"\n"
         file.write(line)
         for key in data.literals.keys():
             literal = data.literals[key]
+            line = ""
             if literal.value is True:
-                line = ""
                 line += str(key) + " 0\n"
-                file.write(line)
+            else:
+                line += "-" + str(key) + " 0\n"
+            file.write(line)
         file.close()
+
+    def write_negative_results(self):
+        file_name = self.filepath.split('.')[0]
+        file = open(file_name + ".out", "w")
+        file.write("")
 
     def recursive_step_dp(self, data):
 
@@ -223,6 +238,8 @@ class DpSatSolver:
             branch.set_literal(var, False)
             data.set_literal(var, True)
 
+            self.splits += 1
+
             found = self.recursive_step_dp(data)
             if found is True:
                 return True
@@ -232,13 +249,15 @@ class DpSatSolver:
         return False
 
     def algorithm(self):
-        data = SatData()
+        data = SatData(self.filepath)
         self.pre_process_clausses(data)
 
         result = self.recursive_step_dp(data)
         if result:
+            self.is_solved = True
             print("SAT")
         else:
+            self.write_negative_results()
             print("NON SAT")
 
     def DLCS(self, literal):
@@ -286,6 +305,8 @@ class DpSatSolver:
             branch.set_literal(max_dlcs_var, not max_dlcs_sign)
             data.set_literal(max_dlcs_var, max_dlcs_sign)
 
+            self.splits += 1
+
             found = self.recursive_step_DLCS(data)
             if found is True:
                 return True
@@ -297,13 +318,15 @@ class DpSatSolver:
         return False
 
     def algorithm_dlcs(self):
-        data = SatData()
+        data = SatData(self.filepath)
         self.pre_process_clausses(data)
 
         result = self.recursive_step_DLCS(data)
         if result:
+            self.is_solved = True
             print("SAT")
         else:
+            self.write_negative_results()
             print("NON SAT")
 
     def get_clause_size(self, clause, literals):
@@ -370,6 +393,8 @@ class DpSatSolver:
             branch.set_literal(max_moms, False)
             data.set_literal(max_moms, True)
 
+            self.splits += 1
+
             found = self.recursive_step_dp(data)
             if found is True:
                 return True
@@ -383,14 +408,40 @@ class DpSatSolver:
         return False
 
     def algorithm_MOMS(self):
-        data = SatData()
+        data = SatData(self.filepath)
         self.pre_process_clausses(data)
 
         result = self.recursive_step_MOMs(data)
         if result:
+            self.is_solved = True
             print("SAT")
         else:
+            self.write_negative_results()
             print("NON SAT")
 
-sat = DpSatSolver()
-sat.algorithm_MOMS()
+
+def run_alg():
+    if len(sys.argv) != 3:
+        print("Wrong number of arguments")
+    else:
+
+        alg_id = sys.argv[1]
+        filepath = sys.argv[2]
+        solver = DpSatSolver(filepath)
+        if alg_id == "-S1":
+            solver.algorithm()
+        elif alg_id == "-S2":
+            solver.algorithm_dlcs()
+        elif alg_id == "-S3":
+            solver.algorithm_MOMS()
+
+        splits = solver.splits
+        result = solver.is_solved
+
+        results_path = "results/results.txt"
+        file = open(results_path,"a")
+        line = filepath + " " + alg_id + " " + str(splits) + " " + str(result) + "\n"
+        file.write(line)
+
+
+run_alg()

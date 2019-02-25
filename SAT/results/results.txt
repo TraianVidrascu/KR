@@ -1,0 +1,3 @@
+sudoku-example.txt -S2 23 True
+sudoku-example.txt -S1 12 True
+sudoku-example.txt -S3 11 True
