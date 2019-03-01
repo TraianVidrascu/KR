@@ -47,10 +47,16 @@ class SatData:
     no_literals = -1
 
     def __init__(self, filepath):
-
+        self.reset_clauses()
         self.literals = {}
         self.read_data("sudoku-rules.txt")
         self.read_additional_rules(filepath)
+
+    def reset_clauses(self):
+        SatData.clauses = []
+        SatData.no_clauses = -1
+        SatData.no_literals = -1
+
 
     def read_data(self, path):
         file = open(path, "r")
@@ -123,6 +129,8 @@ class SatData:
         key = literal.id
         self.literals[key].value = value
         self.literals[key].is_modifiable = False
+
+
 
 
 class DpSatSolver:
@@ -204,7 +212,7 @@ class DpSatSolver:
         file_name = self.filepath.split('.')[0]
         file = open(file_name + ".out", "w")
         literals_no = len(data.literals.keys())
-        line = "p cnf "+str(literals_no)+" "+str(literals_no)+"\n"
+        line = "p cnf " + str(literals_no) + " " + str(literals_no) + "\n"
         file.write(line)
         for key in data.literals.keys():
             literal = data.literals[key]
@@ -249,6 +257,8 @@ class DpSatSolver:
         return False
 
     def algorithm(self):
+        self.is_solved = False
+        self.splits = 0
         data = SatData(self.filepath)
         self.pre_process_clausses(data)
 
@@ -318,6 +328,8 @@ class DpSatSolver:
         return False
 
     def algorithm_dlcs(self):
+        self.is_solved = False
+        self.splits = 0
         data = SatData(self.filepath)
         self.pre_process_clausses(data)
 
@@ -352,7 +364,7 @@ class DpSatSolver:
         positive = 0
         negative = 0
         k = 2
-        for clause in data.clauses:
+        for clause in literal.clauses:
             length = self.get_clause_size(clause, data.literals)
             value = clause.get_value(data.literals)
             if length == smallest_size and not value:
@@ -395,10 +407,10 @@ class DpSatSolver:
 
             self.splits += 1
 
-            found = self.recursive_step_dp(data)
+            found = self.recursive_step_MOMs(data)
             if found is True:
                 return True
-            found = self.recursive_step_dp(branch)
+            found = self.recursive_step_MOMs(branch)
             if found is True:
                 return True
 
@@ -408,6 +420,8 @@ class DpSatSolver:
         return False
 
     def algorithm_MOMS(self):
+        self.is_solved = False
+        self.splits = 0
         data = SatData(self.filepath)
         self.pre_process_clausses(data)
 
@@ -420,13 +434,53 @@ class DpSatSolver:
             print("NON SAT")
 
 
-def run_alg():
+def run_exp(literals, sudoku_id):
+    filepath = "sudoku-example.txt"
+
+    file = open(filepath, "w")
+    for literal in literals:
+        line = str(literal) + " 0\n"
+        file.write(line)
+    file.close()
+
+    solver = DpSatSolver(filepath)
+    solver.algorithm()
+    splits = solver.splits
+    result = solver.is_solved
+    write_exp_res("-S1", sudoku_id, splits, result)
+
+    solver.algorithm_dlcs()
+    splits = solver.splits
+    result = solver.is_solved
+    write_exp_res("-S2", sudoku_id, splits, result)
+
+    solver.algorithm_MOMS()
+    result = solver.is_solved
+    splits = solver.splits
+    write_exp_res("-S3", sudoku_id, splits, result)
+
+
+
+def write_exp_res(alg_id, sudoku, splits, result):
+    results_path = "results/results.txt"
+    file = open(results_path, "a")
+    line = str(sudoku) + " " + alg_id + " " + str(splits) + " " + str(result) + "\n"
+    file.write(line)
+    file.close()
+
+def run_alg(literals, sudoku_id):
     if len(sys.argv) != 3:
         print("Wrong number of arguments")
     else:
 
         alg_id = sys.argv[1]
         filepath = sys.argv[2]
+
+        file = open(filepath, "w")
+        for literal in literals:
+            line = str(literal) + " 0\n"
+            file.write(line)
+
         solver = DpSatSolver(filepath)
         if alg_id == "-S1":
             solver.algorithm()
@@ -439,9 +493,35 @@ def run_alg():
         result = solver.is_solved
 
         results_path = "results/results.txt"
-        file = open(results_path,"a")
-        line = filepath + " " + alg_id + " " + str(splits) + " " + str(result) + "\n"
+        file = open(results_path, "a")
+        line = sudoku_id + " " + alg_id + " " + str(splits) + " " + str(result) + "\n"
         file.write(line)
 
 
-run_alg()
+def read_sudoku_line(line):
+    position = 0
+    variables = []
+    for row in range(1, 10):
+        for column in range(1, 10):
+            value = line[position]
+            if value is not '.':
+                number = int(value)
+                var = 100 * row + 10 * column + number
+                variables.append(var)
+            position += 1
+    return variables
+
+
+def run_experiment(begin, end):
+    file = open("1000 sudokus.txt", "r")
+    counter = 1
+    end = min(1000, end)
+    while counter <= end:
+        line = file.readline()
+        if counter >= begin:
+            literals = read_sudoku_line(line)
+            run_exp(literals, counter)
+        counter += 1
+
+
+run_experiment(1, 49)
