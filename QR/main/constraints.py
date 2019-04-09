@@ -4,6 +4,8 @@ class EqualConstraint:
         self.first_value = first_value
         self.second_quantity = second_quantity
         self.second_value = second_value
+        first_quantity.add_constraint(self)
+        second_quantity.add_constraint(self)
 
     def check_rule(self):
         first_magnitude = self.first_quantity.magnitude

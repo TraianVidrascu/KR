@@ -35,6 +35,8 @@ class ProportionalRelation:
         self.rel_type = rel_type
         self.quantity_1 = quantity_1
         self.quantity_2 = quantity_2
+        self.quantity_1.add_relation(self)
+        self.quantity_2.add_relation(self)
 
     # Computes the derivative of the quantity with respect to the proportional relationship
     def compute_rule(self, proportional_relation):
@@ -49,6 +51,8 @@ class InfluenceRelation:
         self.rel_type = rel_type
         self.quantity_1 = quantity_1
         self.quantity_2 = quantity_2
+        self.quantity_1.add_relation(self)
+        self.quantity_2.add_relation(self)
 
     # Computes the derivative of the quantity with respect to the influence relationship
     def compute_rule(self, proportional_relation):
