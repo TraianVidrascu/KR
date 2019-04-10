@@ -4,21 +4,12 @@ class EqualConstraint:
         self.first_value = first_value
         self.second_quantity = second_quantity
         self.second_value = second_value
-        first_quantity.add_constraint(self)
-        second_quantity.add_constraint(self)
 
     def check_rule(self):
         first_magnitude = self.first_quantity.magnitude
         second_magnitude = self.second_quantity.magnitude
-        if first_magnitude == self.first_value and second_magnitude == self.second_value:
+        if first_magnitude != self.first_value and second_magnitude != self.second_value:
+            return True
+        elif self.first_value == first_magnitude == second_magnitude == self.second_value:
             return True
         return False
-
-    def apply_rule(self):
-        first_magnitude = self.first_quantity.magnitude
-        second_magnitude = self.second_quantity.magnitude
-        if first_magnitude == self.first_value:
-            self.second_quantity.magnitude = first_magnitude
-        if second_magnitude == self.second_value:
-            self.first_quantity.magnitude = second_magnitude
-

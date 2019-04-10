@@ -1,22 +1,24 @@
-from main.utils import Derivative, Magnitude
+from main.utils import Derivative, Magnitude, ValueSpace
 
 
 class Quantity:
-    def __init__(self, value_space, name, relations=None, constrains=None):
+    def __init__(self, value_space, name, derivative=Derivative.ZERO, magnitude=Magnitude.ZERO):
         self.name = name
-        self.derivative = Derivative.ZERO
-        self.magnitude = Magnitude.ZERO
+        self.derivative = derivative
+        self.magnitude = magnitude
         self.value_space = value_space
-        self.relations = relations
-        self.constrains = constrains
-        if self.relations is None:
-            self.relations = []
-        if self.constrains is None:
-            self.constrains = []
 
-    def add_relation(self, relation):
-        self.relations.append(relation)
+    def get_all_states(self):
+        all_quantity_states = []
+        for derivative in ValueSpace.DERIVATIVE_SPACE:
+            for magnitude in self.value_space:
+                pair = (derivative, magnitude)
+                all_quantity_states.append(pair)
+        return all_quantity_states
 
-    def add_constraint(self, constraint):
-        self.constrains.append(constraint)
-
+    def set_value(self, combination):
+        try:
+            self.derivative = combination[0]
+            self.magnitude = combination[1]
+        except:
+            pass

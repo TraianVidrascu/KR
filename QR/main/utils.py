@@ -34,5 +34,6 @@ class Magnitude:
 
 
 class ValueSpace:
-    INFLOW = [Magnitude.POSITIVE, Magnitude.MAX]
+    INFLOW = [Magnitude.ZERO, Magnitude.POSITIVE]
     REST = [Magnitude.ZERO, Magnitude.POSITIVE, Magnitude.MAX]
+    DERIVATIVE_SPACE = [Derivative.NEGATIVE, Derivative.ZERO, Derivative.POSITIVE]
