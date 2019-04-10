@@ -1,0 +1,200 @@
+digraph {
+	1 [label="inflow_d: -1 
+inflow_m: 0 
+volume_d: 0 
+volume_m: 0 
+height_d: 0 
+height_m: 0 
+pressure_d: 0 
+pressure_m: 0 
+outflow_d: 0 
+outflow_m: 0 
+"]
+	2 [label="inflow_d: -1 
+inflow_m: 0 
+volume_d: 1 
+volume_m: 1 
+height_d: 1 
+height_m: 1 
+pressure_d: 1 
+pressure_m: 1 
+outflow_d: 1 
+outflow_m: 1 
+"]
+	3 [label="inflow_d: -1 
+inflow_m: 0 
+volume_d: 1 
+volume_m: 2 
+height_d: 1 
+height_m: 2 
+pressure_d: 1 
+pressure_m: 2 
+outflow_d: 1 
+outflow_m: 2 
+"]
+	4 [label="inflow_d: -1 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 0 
+height_d: 1 
+height_m: 0 
+pressure_d: 1 
+pressure_m: 0 
+outflow_d: 1 
+outflow_m: 0 
+"]
+	5 [label="inflow_d: -1 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 1 
+height_d: 1 
+height_m: 1 
+pressure_d: 1 
+pressure_m: 1 
+outflow_d: 1 
+outflow_m: 1 
+"]
+	6 [label="inflow_d: -1 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 2 
+height_d: 1 
+height_m: 2 
+pressure_d: 1 
+pressure_m: 2 
+outflow_d: 1 
+outflow_m: 2 
+"]
+	7 [label="inflow_d: 0 
+inflow_m: 0 
+volume_d: 0 
+volume_m: 0 
+height_d: 0 
+height_m: 0 
+pressure_d: 0 
+pressure_m: 0 
+outflow_d: 0 
+outflow_m: 0 
+"]
+	8 [label="inflow_d: 0 
+inflow_m: 0 
+volume_d: 1 
+volume_m: 1 
+height_d: 1 
+height_m: 1 
+pressure_d: 1 
+pressure_m: 1 
+outflow_d: 1 
+outflow_m: 1 
+"]
+	9 [label="inflow_d: 0 
+inflow_m: 0 
+volume_d: 1 
+volume_m: 2 
+height_d: 1 
+height_m: 2 
+pressure_d: 1 
+pressure_m: 2 
+outflow_d: 1 
+outflow_m: 2 
+"]
+	10 [label="inflow_d: 0 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 0 
+height_d: 1 
+height_m: 0 
+pressure_d: 1 
+pressure_m: 0 
+outflow_d: 1 
+outflow_m: 0 
+"]
+	11 [label="inflow_d: 0 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 1 
+height_d: 1 
+height_m: 1 
+pressure_d: 1 
+pressure_m: 1 
+outflow_d: 1 
+outflow_m: 1 
+"]
+	12 [label="inflow_d: 0 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 2 
+height_d: 1 
+height_m: 2 
+pressure_d: 1 
+pressure_m: 2 
+outflow_d: 1 
+outflow_m: 2 
+"]
+	13 [label="inflow_d: 1 
+inflow_m: 0 
+volume_d: 0 
+volume_m: 0 
+height_d: 0 
+height_m: 0 
+pressure_d: 0 
+pressure_m: 0 
+outflow_d: 0 
+outflow_m: 0 
+"]
+	14 [label="inflow_d: 1 
+inflow_m: 0 
+volume_d: 1 
+volume_m: 1 
+height_d: 1 
+height_m: 1 
+pressure_d: 1 
+pressure_m: 1 
+outflow_d: 1 
+outflow_m: 1 
+"]
+	15 [label="inflow_d: 1 
+inflow_m: 0 
+volume_d: 1 
+volume_m: 2 
+height_d: 1 
+height_m: 2 
+pressure_d: 1 
+pressure_m: 2 
+outflow_d: 1 
+outflow_m: 2 
+"]
+	16 [label="inflow_d: 1 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 0 
+height_d: 1 
+height_m: 0 
+pressure_d: 1 
+pressure_m: 0 
+outflow_d: 1 
+outflow_m: 0 
+"]
+	17 [label="inflow_d: 1 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 1 
+height_d: 1 
+height_m: 1 
+pressure_d: 1 
+pressure_m: 1 
+outflow_d: 1 
+outflow_m: 1 
+"]
+	18 [label="inflow_d: 1 
+inflow_m: 1 
+volume_d: 1 
+volume_m: 2 
+height_d: 1 
+height_m: 2 
+pressure_d: 1 
+pressure_m: 2 
+outflow_d: 1 
+outflow_m: 2 
+"]
+}

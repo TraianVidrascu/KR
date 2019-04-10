@@ -1,3 +1,4 @@
+from main.relations import Relation
 from main.utils import Derivative, Magnitude, ValueSpace
 
 
@@ -7,6 +8,7 @@ class Quantity:
         self.derivative = derivative
         self.magnitude = magnitude
         self.value_space = value_space
+        self.in_bound_relations = []
 
     def get_all_states(self):
         all_quantity_states = []
@@ -15,6 +17,13 @@ class Quantity:
                 pair = (derivative, magnitude)
                 all_quantity_states.append(pair)
         return all_quantity_states
+
+    def add_relation(self, relation):
+        self.in_bound_relations.append(relation)
+
+    def respects_relations(self):
+        result = Relation.compute_rules(self)
+        return result
 
     def set_value(self, combination):
         self.derivative = combination[0]

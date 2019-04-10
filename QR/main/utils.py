@@ -5,25 +5,11 @@ class Derivative:
 
 
 # defining next possible derivatives values from current one
-class ProportionalRules:
-    NEXT_POSSIBLE_FROM_NEGATIVE_DERIVATIVE = [Derivative.NEGATIVE, Derivative.ZERO]
-    NEXT_POSSIBLE_FROM_ZERO_DERIVATIVE = [Derivative.NEGATIVE, Derivative.ZERO, Derivative.POSITIVE]
-    NEXT_POSSIBLE_FROM_POSITIVE_DERIVATIVE = [Derivative.ZERO, Derivative.POSITIVE]
-
-
-class ParabolicFunction:
-    INITIAL = []
-    MAXIMUM = []
-    INCREASING = []
-    DECREASING = []
-    FINAL = []
-
-    # defining function transition rules for first derivative
-    INITIAL = ([INCREASING], Derivative.ZERO)
-    INCREASING = ([INCREASING, MAXIMUM], Derivative.POSITIVE)
-    MAXIMUM = ([DECREASING], Derivative.ZERO)
-    DECREASING = ([DECREASING, FINAL], Derivative.NEGATIVE)
-    FINAL = ([], Derivative.ZERO)
+class DerivativeRules:
+    derivative_rules = dict()
+    derivative_rules[Derivative.NEGATIVE] = [Derivative.NEGATIVE, Derivative.ZERO]
+    derivative_rules[Derivative.ZERO] = [Derivative.NEGATIVE, Derivative.ZERO, Derivative.POSITIVE]
+    derivative_rules[Derivative.POSITIVE] = [Derivative.ZERO, Derivative.POSITIVE]
 
 
 # Magnitudes used in our causal model 0 means zero, 1 means positive and 2 means max
@@ -31,6 +17,22 @@ class Magnitude:
     ZERO = 0
     MAX = 2
     POSITIVE = 1
+
+
+# Defining possible magnitude from one state transition to another
+class MagnitudeRules:
+    magnitude_rules = dict()
+    magnitude_rules[Magnitude.ZERO] = dict([(Derivative.NEGATIVE, [Magnitude.ZERO]),
+                                            (Derivative.ZERO, [Magnitude.ZERO]),
+                                            (Derivative.POSITIVE, [Magnitude.POSITIVE])])
+
+    magnitude_rules[Magnitude.POSITIVE] = dict([(Derivative.NEGATIVE, [Magnitude.ZERO, Magnitude.POSITIVE]),
+                                                (Derivative.ZERO, [Magnitude.POSITIVE]),
+                                                (Derivative.POSITIVE, [Magnitude.POSITIVE, Magnitude.MAX])])
+
+    magnitude_rules[Magnitude.MAX] = dict([(Derivative.NEGATIVE, [Magnitude.POSITIVE]),
+                                           (Derivative.ZERO, [Magnitude.MAX]),
+                                           (Derivative.POSITIVE, [Magnitude.MAX])])
 
 
 class ValueSpace:

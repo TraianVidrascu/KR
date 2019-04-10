@@ -15,12 +15,18 @@ class Container:
     def __init__(self):
         self.quantities = []
         self.constraints = []
-        self.relations = []
         self.init()
 
     def repsects_constraints(self):
         for constraint in self.constraints:
             result = constraint.check_rule()
+            if result is False:
+                return False
+        return True
+
+    def respect_relations(self):
+        for quantity in self.quantities:
+            result = quantity.respects_relations()
             if result is False:
                 return False
         return True
@@ -47,16 +53,16 @@ class Container:
         # defining influential relations
         i1 = InfluenceRelation(RelationType.POSITIVE, inflow, volume)
         i2 = InfluenceRelation(RelationType.POSITIVE, outflow, volume)
-        self.relations.append(i1)
-        self.relations.append(i2)
+        volume.add_relation(i1)
+        volume.add_relation(i2)
 
         # defining proportional relations
         p1 = ProportionalRelation(RelationType.POSITIVE, volume, height)
         p2 = ProportionalRelation(RelationType.POSITIVE, height, pressure)
         p3 = ProportionalRelation(RelationType.POSITIVE, pressure, outflow)
-        self.relations.append(p1)
-        self.relations.append(p2)
-        self.relations.append(p3)
+        height.add_relation(p1)
+        pressure.add_relation(p2)
+        outflow.add_relation(p3)
 
         # defining constraints
         c1 = EqualConstraint(volume, Magnitude.MAX, height, Magnitude.MAX)
