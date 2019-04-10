@@ -17,8 +17,5 @@ class Quantity:
         return all_quantity_states
 
     def set_value(self, combination):
-        try:
-            self.derivative = combination[0]
-            self.magnitude = combination[1]
-        except:
-            pass
+        self.derivative = combination[0]
+        self.magnitude = combination[1]

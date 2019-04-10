@@ -58,7 +58,7 @@ class InfluenceRelation:
         rel_type = self.rel_type
         first_magnitude = self.quantity_1.magnitude
         second_derivative = self.quantity_2.derivative
-        expected_derivative = first_magnitude > Magnitude.ZERO if rel_type * Derivative.POSITIVE else Derivative.ZERO
+        expected_derivative = rel_type * Derivative.POSITIVE if first_magnitude > Magnitude.ZERO else Derivative.ZERO
         if expected_derivative == second_derivative:
             return True
         return False

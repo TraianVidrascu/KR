@@ -18,15 +18,11 @@ class Container:
         self.relations = []
         self.init()
 
-    def is_valid(self):
+    def repsects_constraints(self):
         for constraint in self.constraints:
             result = constraint.check_rule()
             if result is False:
                 return False
-        # for relation in self.relations:
-        #     result = relation.check_rule()
-        #     if result is False:
-        #         return False
         return True
 
     def get_all_combinations(self):
@@ -85,6 +81,3 @@ class Container:
         self.quantities.append(pressure)
         self.quantities.append(outflow)
 
-
-c = Container()
-print(c.is_valid())
