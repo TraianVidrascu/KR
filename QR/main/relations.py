@@ -14,6 +14,7 @@ class Relation:
 
         if len(relations) == 0:
             return True
+
         derivative = quantity.derivative
         negative = 0
         zero = 0
@@ -24,7 +25,7 @@ class Relation:
                 negative += 1
             elif result > 0:
                 positive += 1
-            else:
+            elif result == 0:
                 zero += 1
 
         if positive > 0 and negative == 0:

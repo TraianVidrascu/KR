@@ -52,7 +52,7 @@ class Container:
 
         # defining influential relations
         i1 = InfluenceRelation(RelationType.POSITIVE, inflow, volume)
-        i2 = InfluenceRelation(RelationType.POSITIVE, outflow, volume)
+        i2 = InfluenceRelation(RelationType.NEGATIVE, outflow, volume)
         volume.add_relation(i1)
         volume.add_relation(i2)
 
