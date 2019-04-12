@@ -161,7 +161,7 @@ def create_graph_nodes(good_states, keep_states):
         if keep_states[idx]:
             count += 1
             quantities = state.quantities
-            label = str(state.id)
+            label = str(state.name) + "\n"
             for quantity in quantities:
                 mag = quantity.magnitude
                 dev = quantity.derivative
@@ -198,6 +198,27 @@ def filter_states(valid_constraints_relations, transitions):
     return keep_states
 
 
+def name_states(node, valid_constraints_relations, new_transitions):
+    key = int(node)
+    current_state = valid_constraints_relations[key]
+    current_state.name = str(Container.NAME)
+    out_bounds = new_transitions[node]
+
+    stack = out_bounds[:]
+    while len(stack) > 0:
+        front = stack[0]
+        stack.remove(front)
+        child_state = valid_constraints_relations[int(front)]
+        if child_state.name == "":
+            Container.NAME += 1
+            child_state.name = str(Container.NAME)
+            children = new_transitions[front]
+            for child in children:
+                new_child_state = valid_constraints_relations[int(child)]
+                if new_child_state.name == "":
+                    stack.append(child)
+
+
 generate_states([0 for _ in range(len(combinations))], 0, 0)
 valid_constraint_states = keep_valid_constraint_states(states)
 valid_constraints_relations = keep_valid_relations(valid_constraint_states)
@@ -212,6 +233,7 @@ filter_transition(initial_node, {}, transitions, new_transitions)
 
 keep = filter_states(valid_constraints_relations, new_transitions)
 
+name_states(initial_node, valid_constraints_relations, new_transitions)
 graph = create_graph_nodes(valid_constraints_relations, keep)
 create_graph_edges(valid_constraints_relations, new_transitions)
 

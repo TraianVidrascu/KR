@@ -12,7 +12,7 @@ INFLOW = "inflow"
 
 class Container:
     INDEX = 0
-
+    NAME = 1
     def __init__(self):
         self.quantities = []
         self.constraints = []
