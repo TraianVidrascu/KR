@@ -1,7 +1,7 @@
 from main.constraints import EqualConstraint
 from main.quantity import Quantity
 from main.relations import ProportionalRelation, RelationType, InfluenceRelation
-from main.utils import ValueSpace, Magnitude
+from main.utils import ValueSpace, Magnitude, Derivative
 
 OUTFLOW = "outflow"
 PRESSURE = "pressure"
@@ -11,11 +11,20 @@ INFLOW = "inflow"
 
 
 class Container:
+    INDEX = 0
 
     def __init__(self):
         self.quantities = []
         self.constraints = []
+        self.id = Container.get_id()
+        self.name = ""
         self.init()
+
+    def has_valid_values(self):
+        for quantity in self.quantities:
+            if quantity.magnitude is Magnitude.ZERO and quantity.derivative is Derivative.NEGATIVE:
+                return False
+        return True
 
     def repsects_constraints(self):
         for constraint in self.constraints:
@@ -87,3 +96,7 @@ class Container:
         self.quantities.append(pressure)
         self.quantities.append(outflow)
 
+    @classmethod
+    def get_id(cls):
+        Container.INDEX += 1
+        return Container.INDEX
